@@ -102,6 +102,28 @@ def test_endpoints():
     except Exception as e:
         print(f"❌ POST /api/simple/conversation failed: {e}")
     
+    # Test simple conversation endpoint
+    try:
+        response = requests.post(f"{base_url}/api/conversations/simple", timeout=10)
+        status = "✅" if response.status_code == 200 else "❌"
+        print(f"{status} POST /api/conversations/simple - Status: {response.status_code}")
+        if response.status_code == 200:
+            data = response.json()
+            print(f"   Simple conversation ID: {data.get('conversation_id', 'None')}")
+    except Exception as e:
+        print(f"❌ POST /api/conversations/simple failed: {e}")
+    
+    # Test ultra simple chat endpoint
+    try:
+        response = requests.post(f"{base_url}/test-chat", timeout=10)
+        status = "✅" if response.status_code == 200 else "❌"
+        print(f"{status} POST /test-chat - Status: {response.status_code}")
+        if response.status_code == 200:
+            data = response.json()
+            print(f"   Test chat ID: {data.get('chat_id', 'None')}")
+    except Exception as e:
+        print(f"❌ POST /test-chat failed: {e}")
+    
     # Test public conversations endpoint with minimal data
     try:
         test_data = {
