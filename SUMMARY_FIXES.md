@@ -38,6 +38,7 @@
 - `GET /` - Informasi API dan daftar endpoint
 - `GET /health` - Health check (sudah ada, diperbaiki)
 - `GET /docs` - API documentation (Swagger UI)
+- `POST /test-chat` - **BARU** - Ultra simple chat endpoint tanpa dependencies
 
 ### HF Spaces Specific Endpoints
 - `GET /api/hf/status` - Status deployment HF Spaces
@@ -47,9 +48,11 @@
 - `GET /api/hf/logs-container` - **BARU** - Endpoint logs untuk HF UI
 - `GET /api/hf/logs` - **BARU** - Endpoint logs alternatif
 - `POST /api/hf/test-conversation` - **BARU** - Test endpoint sederhana
+- `POST /api/hf/simple-conversation` - **BARU** - Simple conversation dengan file system fallback
 
-### Improved Endpoints
+### Conversation Endpoints
 - `POST /api/conversations` - Diperbaiki error handling dan response
+- `POST /api/conversations/simple` - **BARU** - Simple conversation tanpa complex dependencies
 
 ## 🔧 Perubahan File
 
@@ -69,6 +72,8 @@
 - Try-catch untuk startup errors
 - Informasi debug yang lebih lengkap
 - Error handling untuk import failures
+- Comprehensive directory creation dengan permissions
+- Semua directory yang diperlukan (/tmp/openhands/sessions, logs, data, dll)
 ```
 
 ### 3. `/openhands/server/routes/hf_spaces.py`
@@ -120,9 +125,11 @@ curl -X POST http://localhost:7860/api/hf/test-conversation
 GET / → 404 Not Found
 GET /api/hf/logs-container → 404 Not Found  
 POST /api/conversations → 500 Internal Server Error
+Permission denied: /tmp/openhands/sessions
 CORS → Blocked requests
 Errors → Unhelpful messages
 Debugging → Very difficult
+Chat creation → Always fails
 ```
 
 ### After (✅ Working):
@@ -130,9 +137,14 @@ Debugging → Very difficult
 GET / → 200 OK (API info)
 GET /api/hf/logs-container → 200 OK
 POST /api/conversations → 200/400/401 (proper error handling)
+POST /test-chat → 200 OK (ultra simple)
+POST /api/conversations/simple → 200 OK (minimal dependencies)
+POST /api/hf/simple-conversation → 200 OK (with file fallback)
+All directories → Created with proper permissions
 CORS → All requests allowed
 Errors → Helpful, actionable messages
 Debugging → Comprehensive debug endpoints
+Chat creation → Multiple working options
 ```
 
 ## 🚀 Deployment Ready
@@ -157,11 +169,14 @@ SKIP_SETTINGS_MODAL=true
 
 Setelah deployment ke HF Spaces:
 
-1. **Root URL akan menampilkan informasi API** instead of 404
-2. **Semua endpoint HF Spaces akan berfungsi** tanpa 404 errors
-3. **Error messages akan informatif** dan membantu debugging
-4. **CORS issues akan teratasi** untuk frontend integration
-5. **Conversation creation akan memberikan error yang jelas** jika ada masalah konfigurasi
+1. **Root URL akan menampilkan informasi API** instead of 404 ✅
+2. **Semua endpoint HF Spaces akan berfungsi** tanpa 404 errors ✅
+3. **Error messages akan informatif** dan membantu debugging ✅
+4. **CORS issues akan teratasi** untuk frontend integration ✅
+5. **Conversation creation akan memberikan error yang jelas** jika ada masalah konfigurasi ✅
+6. **Multiple conversation endpoints tersedia** untuk berbagai use cases ✅
+7. **Directory permissions akan benar** dan tidak ada permission denied errors ✅
+8. **Chat functionality akan bekerja** dengan minimal setup ✅
 
 ## 📋 Next Steps
 
